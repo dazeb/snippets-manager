@@ -88,6 +88,51 @@ After deployment, verify:
 - Authentication works correctly
 - All features function as expected
 
+## Docker Deployment
+
+### Option 1: Multi-stage Production Build (Recommended)
+
+Use the main Dockerfile for production deployments with nginx:
+
+```bash
+# Build the image
+docker build -t snippets-manager .
+
+# Run the container
+docker run -p 80:80 snippets-manager
+```
+
+### Option 2: Simple Single-stage Build
+
+Use the simple Dockerfile for platforms like Railway:
+
+```bash
+# Build the image
+docker build -f Dockerfile.simple -t snippets-manager-simple .
+
+# Run the container (Railway will set PORT automatically)
+docker run -p 3000:3000 -e PORT=3000 snippets-manager-simple
+```
+
+## Railway Deployment
+
+The project is configured for Railway deployment with:
+
+- `railway.toml` - Railway configuration
+- `nixpacks.toml` - Nixpacks build configuration
+- Fixed `pnpm-workspace.yaml` - Resolves "packages field missing" error
+
+### Deploy to Railway
+
+1. Connect your GitHub repository to Railway
+2. Railway will automatically detect the configuration
+3. Set environment variables in Railway dashboard:
+   ```
+   CONVEX_DEPLOY_KEY=prod:your-key
+   VITE_CONVEX_URL=https://your-deployment.convex.cloud
+   NODE_ENV=production
+   ```
+
 ## CI/CD Integration
 
 For automated deployments, set these environment variables in your CI/CD system:

@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - 2025-01-06
+
+### Fixed
+- Fixed pnpm workspace configuration causing deployment failures
+- Added proper `packages` field to `pnpm-workspace.yaml` to resolve "packages field missing or empty" error
+
+### Added
+- Created production-ready Dockerfile for containerized deployments
+- Added nginx configuration for optimized static file serving
+- Created .dockerignore file for efficient Docker builds
+- Added alternative simple Dockerfile for Railway/Nixpacks compatibility
+
+### Infrastructure
+- Improved deployment reliability with proper pnpm workspace setup
+- Enhanced build process with multi-stage Docker builds
+- Added gzip compression and security headers in nginx configuration
+
 ## [Unreleased]
 
 ### Added
