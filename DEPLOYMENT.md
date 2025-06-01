@@ -155,6 +155,33 @@ After deployment, verify:
 
 Your app is **serverless and static** - keep it simple! 🎉
 
+## 🚨 Troubleshooting MIME Type Issues
+
+If you encounter the error: `Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "application/octet-stream"`
+
+### **Root Cause:**
+The web server is serving JavaScript files with the wrong MIME type.
+
+### **Solutions by Platform:**
+
+#### **Vercel/Netlify (Recommended):**
+- ✅ **Already configured** in `vercel.json` and `netlify.toml`
+- ✅ **Automatic MIME type handling**
+- ✅ **No additional configuration needed**
+
+#### **Custom Server/Docker:**
+1. **Use nginx configuration** (included in `nginx.conf`)
+2. **Use Node.js server** (included in `server.js`)
+3. **Ensure proper Content-Type headers** for `.js` and `.mjs` files
+
+#### **Manual Fix:**
+Ensure your server sends these headers:
+```
+Content-Type: text/javascript; charset=utf-8
+```
+
+For JavaScript files (`.js`, `.mjs`)
+
 ## 🐳 Docker (Not Recommended)
 
 If you must use Docker, the updated `Dockerfile` uses a simple static server instead of nginx:

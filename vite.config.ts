@@ -50,8 +50,12 @@ window.addEventListener('message', async (message) => {
         return false;
       },
       output: {
-        // Ensure proper chunk loading order
+        // Ensure proper chunk loading order and module format
         inlineDynamicImports: false,
+        format: 'es',
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
         manualChunks: (id) => {
           // React core - keep small and essential
           if (id.includes('node_modules/react/') && !id.includes('react-dom')) {

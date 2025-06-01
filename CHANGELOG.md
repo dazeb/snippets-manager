@@ -170,6 +170,46 @@ All notable changes to this project will be documented in this file.
 - **Fallback**: Plain text with line numbers if highlighting fails
 - **Always Works**: Code display never breaks the application
 
+## [2025-01-06] - MIME Type Error Fix
+
+### 🐛 **Fixed: Module Script MIME Type Error**
+
+**Problem:** `Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "application/octet-stream"`
+
+**Root Cause:** Web servers serving JavaScript files with incorrect MIME type instead of `text/javascript`
+
+**✅ Solutions Implemented:**
+
+**🌐 Platform-Specific Configurations:**
+- **Vercel**: Updated `vercel.json` with proper Content-Type headers for `.js` and `.mjs` files
+- **Netlify**: Enhanced `netlify.toml` with comprehensive MIME type configuration
+- **Docker/nginx**: Created `nginx.conf` with proper MIME type mappings
+- **Node.js**: Added `server.js` with Express server and correct headers
+
+**🔧 Build Configuration:**
+- **Vite Config**: Ensured ES module format with proper file naming
+- **Output Format**: Explicit `format: 'es'` for ES modules
+- **File Extensions**: Consistent `.js` extensions for all chunks
+- **Module Preloading**: Proper `modulepreload` links in HTML
+
+**📁 Files Added:**
+- **`nginx.conf`**: Production-ready nginx configuration
+- **`server.js`**: Node.js server with proper MIME types
+- **`Dockerfile.serve`**: Alternative Docker setup with serve
+- **Enhanced deployment configs**: Vercel and Netlify with MIME type headers
+
+**🛡️ Deployment Solutions:**
+- **Vercel/Netlify**: Zero-config deployment with automatic MIME type handling
+- **Docker**: nginx-based setup with proper Content-Type headers
+- **Custom Servers**: Express.js server with MIME type middleware
+- **Troubleshooting Guide**: Added to DEPLOYMENT.md for common issues
+
+**📊 Technical Details:**
+- **Correct MIME Type**: `text/javascript; charset=utf-8`
+- **File Extensions**: `.js` for all JavaScript modules
+- **Module Type**: `type="module"` in HTML script tags
+- **Cross-Origin**: Proper `crossorigin` attributes for module preloading
+
 ## [Unreleased] - 2025-01-06
 
 ### Fixed

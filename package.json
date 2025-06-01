@@ -12,7 +12,9 @@
     "lint": "tsc -p convex -noEmit --pretty false && tsc -p . -noEmit --pretty false && convex dev --once && vite build",
     "deploy:prod": "npm run build && convex deploy --cmd-url-env-var-name=VITE_CONVEX_URL",
     "deploy:backend": "convex deploy",
-    "deploy:frontend": "npm run build"
+    "deploy:frontend": "npm run build",
+    "serve": "node server.js",
+    "start": "npm run build && npm run serve"
   },
   "dependencies": {
     "@convex-dev/auth": "^0.0.80",
@@ -41,6 +43,7 @@
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
+    "express": "^5.1.0",
     "globals": "^15.15.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.5.3",

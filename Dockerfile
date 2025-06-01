@@ -19,17 +19,17 @@ COPY . .
 # Build the application
 RUN pnpm build
 
-# Production stage - Simple static server
-FROM node:22-slim
-
-# Install serve globally for static hosting
-RUN npm install -g serve
+# Production stage - nginx with proper MIME types
+FROM nginx:alpine
 
 # Copy built assets from builder stage
-COPY --from=builder /app/dist /app
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Expose port 3000
-EXPOSE 3000
+# Copy nginx configuration with proper MIME types
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Start static server with SPA support
-CMD ["serve", "-s", "/app", "-l", "3000"]
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
