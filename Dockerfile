@@ -1,5 +1,5 @@
-# Use Node.js 20 Slim Stretch for smaller image size and security updates (CVEs) and npm for pnpm
-FROM node:20-slim-stretch AS base
+# Build stage
+FROM node:22-slim AS builder
 
 # Install pnpm globally
 RUN npm install -g pnpm
@@ -8,7 +8,7 @@ RUN npm install -g pnpm
 WORKDIR /app
 
 # Copy package files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
@@ -16,23 +16,20 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
-# Build stage
-FROM base AS build
-
 # Build the application
-RUN pnpm run build
+RUN pnpm build
 
-# Production stage
-FROM nginx:stable-slim AS production
+# Production stage - Simple static server
+FROM node:22-slim
 
-# Copy built assets from build stage
-COPY --from=build /app/dist /usr/share/nginx/html
+# Install serve globally for static hosting
+RUN npm install -g serve
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+# Copy built assets from builder stage
+COPY --from=builder /app/dist /app
 
-# Expose port 80
-EXPOSE 80
+# Expose port 3000
+EXPOSE 3000
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start static server with SPA support
+CMD ["serve", "-s", "/app", "-l", "3000"]
