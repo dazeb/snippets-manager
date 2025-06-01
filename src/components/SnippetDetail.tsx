@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Doc } from "../../convex/_generated/dataModel";
-import { CodeBlock } from "./CodeBlock";
+import { SafeCodeBlock } from "./SafeCodeBlock";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -139,7 +139,7 @@ export function SnippetDetail({ snippet, onEdit, onDelete }: SnippetDetailProps)
 
       {/* Code */}
       <div className="flex-1 overflow-hidden">
-        <CodeBlock code={snippet.code} language={snippet.language} />
+        <SafeCodeBlock code={snippet.code} language={snippet.language} />
       </div>
     </div>
   );

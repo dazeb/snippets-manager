@@ -1,10 +1,15 @@
 import { lazy, Suspense } from 'react';
 
-// Lazy load the syntax highlighter
-const SyntaxHighlighter = lazy(() => 
-  import('react-syntax-highlighter').then(module => ({
-    default: module.Prism
-  }))
+// Lazy load the syntax highlighter with better error handling
+const SyntaxHighlighter = lazy(() =>
+  import('react-syntax-highlighter/dist/esm/prism').then(module => ({
+    default: module.default || module.Prism || module
+  })).catch(() =>
+    // Fallback to regular import if ESM fails
+    import('react-syntax-highlighter').then(module => ({
+      default: module.Prism
+    }))
+  )
 );
 
 // Lazy load common language styles

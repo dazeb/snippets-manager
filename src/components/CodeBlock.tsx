@@ -4,11 +4,16 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useTheme } from "@/hooks/useTheme";
 
-// Lazy load syntax highlighter for better code splitting
+// Lazy load syntax highlighter for better code splitting with error handling
 const SyntaxHighlighter = lazy(() =>
-  import('react-syntax-highlighter').then(module => ({
-    default: module.Prism
-  }))
+  import('react-syntax-highlighter/dist/esm/prism').then(module => ({
+    default: module.default || module.Prism || module
+  })).catch(() =>
+    // Fallback to regular import if ESM fails
+    import('react-syntax-highlighter').then(module => ({
+      default: module.Prism
+    }))
+  )
 );
 
 // Lazy load themes

@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Doc, Id } from "../../convex/_generated/dataModel";
 import { Badge } from "@/components/ui/badge";
-import { SpaceForm } from "./SpaceForm";
+import { LazySpaceForm as SpaceForm, ComponentLoader } from "./LazyComponents";
 import { toast } from "sonner";
 
 interface SpaceSelectorProps {
@@ -69,11 +69,13 @@ export function SpaceSelector({ onSelectSpace }: SpaceSelectorProps) {
   if (isCreating || editingSpace) {
     return (
       <div className="min-h-[60vh] bg-background">
-        <SpaceForm
-          space={editingSpace || undefined}
-          onSave={handleSave}
-          onCancel={handleCancel}
-        />
+        <Suspense fallback={<ComponentLoader message="Loading space form..." />}>
+          <SpaceForm
+            space={editingSpace || undefined}
+            onSave={handleSave}
+            onCancel={handleCancel}
+          />
+        </Suspense>
       </div>
     );
   }

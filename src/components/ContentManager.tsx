@@ -2,9 +2,11 @@ import { useState, Suspense } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { SnippetList } from "./SnippetList";
-import { SnippetDetail } from "./SnippetDetail";
 import { PromptList } from "./PromptList";
-import { PromptDetail } from "./PromptDetail";
+import {
+  LazySnippetDetail as SnippetDetail,
+  LazyPromptDetail as PromptDetail
+} from "./LazyComponents";
 import {
   LazySnippetForm as SnippetForm,
   LazyPromptForm as PromptForm,
@@ -216,17 +218,21 @@ export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps)
           </Suspense>
         ) : hasSelection ? (
           activeTab === "snippets" && selectedSnippet ? (
-            <SnippetDetail
-              snippet={selectedSnippet}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
+            <Suspense fallback={<ComponentLoader message="Loading snippet..." />}>
+              <SnippetDetail
+                snippet={selectedSnippet}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            </Suspense>
           ) : activeTab === "prompts" && selectedPrompt ? (
-            <PromptDetail
-              prompt={selectedPrompt}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
+            <Suspense fallback={<ComponentLoader message="Loading prompt..." />}>
+              <PromptDetail
+                prompt={selectedPrompt}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            </Suspense>
           ) : null
         ) : (
           <div className="flex items-center justify-center h-full text-muted-foreground">

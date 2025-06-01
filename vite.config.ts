@@ -44,7 +44,14 @@ window.addEventListener('message', async (message) => {
   },
   build: {
     rollupOptions: {
+      // Prevent circular dependency issues
+      external: (id) => {
+        // Don't externalize these, but handle them carefully
+        return false;
+      },
       output: {
+        // Ensure proper chunk loading order
+        inlineDynamicImports: false,
         manualChunks: (id) => {
           // React core - keep small and essential
           if (id.includes('node_modules/react/') && !id.includes('react-dom')) {
@@ -61,12 +68,20 @@ window.addEventListener('message', async (message) => {
             return 'convex-vendor';
           }
 
-          // Syntax highlighting chunk (largest dependency)
-          if (id.includes('node_modules/react-syntax-highlighter') ||
-              id.includes('node_modules/prismjs') ||
+          // Syntax highlighting chunk (largest dependency) - more specific splitting
+          if (id.includes('node_modules/react-syntax-highlighter')) {
+            // Split core highlighter from languages
+            if (id.includes('/languages/') || id.includes('/styles/')) {
+              return 'syntax-highlighting-assets';
+            }
+            return 'syntax-highlighting-core';
+          }
+
+          // Prism and other syntax libraries
+          if (id.includes('node_modules/prismjs') ||
               id.includes('node_modules/highlight.js') ||
               id.includes('node_modules/refractor')) {
-            return 'syntax-highlighting';
+            return 'syntax-highlighting-libs';
           }
 
           // Radix UI components - separate chunk as they're large
