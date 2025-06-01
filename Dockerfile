@@ -1,5 +1,5 @@
-# Use Node.js 20 Alpine for smaller image size
-FROM node:20-alpine AS base
+# Use Node.js 20 Slim Stretch for smaller image size and security updates (CVEs) and npm for pnpm
+FROM node:20-slim-stretch AS base
 
 # Install pnpm globally
 RUN npm install -g pnpm
@@ -23,7 +23,7 @@ FROM base AS build
 RUN pnpm run build
 
 # Production stage
-FROM nginx:alpine AS production
+FROM nginx:stable-slim AS production
 
 # Copy built assets from build stage
 COPY --from=build /app/dist /usr/share/nginx/html

@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { SnippetList } from "./SnippetList";
 import { SnippetDetail } from "./SnippetDetail";
-import { SnippetForm } from "./SnippetForm";
 import { PromptList } from "./PromptList";
 import { PromptDetail } from "./PromptDetail";
-import { PromptForm } from "./PromptForm";
+import {
+  LazySnippetForm as SnippetForm,
+  LazyPromptForm as PromptForm,
+  ComponentLoader
+} from "./LazyComponents";
 import { SearchAndFilters } from "./SearchAndFilters";
 import { Id } from "../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
@@ -194,21 +197,23 @@ export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps)
       {/* Main Content */}
       <div className="flex-1 bg-muted/30">
         {isShowingForm ? (
-          activeTab === "snippets" ? (
-            <SnippetForm
-              spaceId={spaceId}
-              snippet={isEditing ? selectedSnippet || undefined : undefined}
-              onSave={handleSave}
-              onCancel={handleCancel}
-            />
-          ) : (
-            <PromptForm
-              spaceId={spaceId}
-              prompt={isEditing ? selectedPrompt || undefined : undefined}
-              onSave={handleSave}
-              onCancel={handleCancel}
-            />
-          )
+          <Suspense fallback={<ComponentLoader message="Loading form..." />}>
+            {activeTab === "snippets" ? (
+              <SnippetForm
+                spaceId={spaceId}
+                snippet={isEditing ? selectedSnippet || undefined : undefined}
+                onSave={handleSave}
+                onCancel={handleCancel}
+              />
+            ) : (
+              <PromptForm
+                spaceId={spaceId}
+                prompt={isEditing ? selectedPrompt || undefined : undefined}
+                onSave={handleSave}
+                onCancel={handleCancel}
+              />
+            )}
+          </Suspense>
         ) : hasSelection ? (
           activeTab === "snippets" && selectedSnippet ? (
             <SnippetDetail

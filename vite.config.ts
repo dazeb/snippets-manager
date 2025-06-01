@@ -46,9 +46,14 @@ window.addEventListener('message', async (message) => {
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // React vendor chunk
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-            return 'react-vendor';
+          // React core - keep small and essential
+          if (id.includes('node_modules/react/') && !id.includes('react-dom')) {
+            return 'react-core';
+          }
+
+          // React DOM - separate chunk
+          if (id.includes('node_modules/react-dom')) {
+            return 'react-dom';
           }
 
           // Convex vendor chunk
@@ -64,29 +69,94 @@ window.addEventListener('message', async (message) => {
             return 'syntax-highlighting';
           }
 
-          // UI vendor chunk
-          if (id.includes('node_modules/@radix-ui') ||
-              id.includes('node_modules/class-variance-authority') ||
+          // Radix UI components - separate chunk as they're large
+          if (id.includes('node_modules/@radix-ui')) {
+            return 'radix-ui';
+          }
+
+          // Tailwind and styling utilities
+          if (id.includes('node_modules/class-variance-authority') ||
               id.includes('node_modules/clsx') ||
-              id.includes('node_modules/tailwind-merge')) {
-            return 'ui-vendor';
+              id.includes('node_modules/tailwind-merge') ||
+              id.includes('node_modules/tailwindcss')) {
+            return 'styling-utils';
           }
 
-          // Utility chunks
+          // Icons and visual components
+          if (id.includes('node_modules/lucide-react') ||
+              id.includes('node_modules/@heroicons') ||
+              id.includes('node_modules/react-icons')) {
+            return 'icons';
+          }
+
+          // Notification and UI feedback
           if (id.includes('node_modules/sonner') ||
-              id.includes('node_modules/geist') ||
-              id.includes('node_modules/lucide-react')) {
-            return 'utils';
+              id.includes('node_modules/react-hot-toast')) {
+            return 'notifications';
           }
 
-          // Default vendor chunk for other node_modules
+          // Fonts and typography
+          if (id.includes('node_modules/geist') ||
+              id.includes('node_modules/@next/font')) {
+            return 'fonts';
+          }
+
+          // Date and time utilities
+          if (id.includes('node_modules/date-fns') ||
+              id.includes('node_modules/moment') ||
+              id.includes('node_modules/dayjs')) {
+            return 'date-utils';
+          }
+
+          // Form and validation libraries
+          if (id.includes('node_modules/react-hook-form') ||
+              id.includes('node_modules/zod') ||
+              id.includes('node_modules/yup')) {
+            return 'forms';
+          }
+
+          // Animation libraries
+          if (id.includes('node_modules/framer-motion') ||
+              id.includes('node_modules/react-spring') ||
+              id.includes('node_modules/@react-spring')) {
+            return 'animations';
+          }
+
+          // Default vendor chunk for remaining node_modules
           if (id.includes('node_modules')) {
             return 'vendor';
+          }
+
+          // App components chunking
+          if (id.includes('/src/components/')) {
+            // Large components get their own chunks
+            if (id.includes('ContentManager') ||
+                id.includes('SpaceSelector') ||
+                id.includes('SnippetForm') ||
+                id.includes('PromptForm')) {
+              return 'large-components';
+            }
+            // UI components
+            if (id.includes('/ui/')) {
+              return 'ui-components';
+            }
+            // Regular components
+            return 'components';
           }
         }
       }
     },
-    // Increase chunk size warning limit to 1MB for syntax highlighting
-    chunkSizeWarningLimit: 1000,
+    // Increase chunk size warning limit to 1.5MB
+    chunkSizeWarningLimit: 1500,
+    // Enable source maps for better debugging
+    sourcemap: false,
+    // Minification options
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
   },
 }));

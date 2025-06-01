@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Doc, Id } from "../../convex/_generated/dataModel";
-import { IconPicker } from "./IconPicker";
+import { LazyIconPicker as IconPicker, ComponentLoader } from "./LazyComponents";
 import { toast } from "sonner";
 
 interface SpaceFormProps {
@@ -101,10 +101,12 @@ export function SpaceForm({ space, onSave, onCancel }: SpaceFormProps) {
             />
           </div>
 
-          <IconPicker
-            selectedIcon={icon}
-            onIconSelect={setIcon}
-          />
+          <Suspense fallback={<ComponentLoader message="Loading icon picker..." />}>
+            <IconPicker
+              selectedIcon={icon}
+              onIconSelect={setIcon}
+            />
+          </Suspense>
 
           <div className="flex justify-end space-x-3">
             <button

@@ -8,14 +8,14 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { useState, useEffect, lazy, Suspense } from "react";
 import { Id } from "../convex/_generated/dataModel";
 import { useTheme } from "./hooks/useTheme";
+import { ComponentPreloader } from "./utils/preloader";
 
-// Lazy load heavy components for better code splitting
-const ContentManager = lazy(() =>
-  import("./components/ContentManager").then(module => ({ default: module.ContentManager }))
-);
-const SpaceSelector = lazy(() =>
-  import("./components/SpaceSelector").then(module => ({ default: module.SpaceSelector }))
-);
+// Import lazy components
+import {
+  LazyContentManager as ContentManager,
+  LazySpaceSelector as SpaceSelector,
+  ComponentLoader
+} from "./components/LazyComponents";
 
 export default function App() {
   // Initialize theme
@@ -76,6 +76,13 @@ function Content() {
   const [isNavigatingBack, setIsNavigatingBack] = useState(false);
   const loggedInUser = useQuery(api.auth.loggedInUser);
 
+  // Preload essential components when user is authenticated
+  useEffect(() => {
+    if (loggedInUser) {
+      ComponentPreloader.preloadEssentialComponents();
+    }
+  }, [loggedInUser]);
+
   // Reset navigation state when user changes
   useEffect(() => {
     if (loggedInUser === null) {
@@ -106,14 +113,7 @@ function Content() {
     <div className="flex flex-col">
       <Authenticated>
         <ErrorBoundary>
-          <Suspense fallback={
-            <div className="flex items-center justify-center min-h-[400px]">
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                <p className="text-muted-foreground">Loading content...</p>
-              </div>
-            </div>
-          }>
+          <Suspense fallback={<ComponentLoader message="Loading content..." />}>
             {selectedSpaceId && !isNavigatingBack ? (
               <ContentManager
                 spaceId={selectedSpaceId}
