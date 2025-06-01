@@ -29,6 +29,9 @@ importers:
       lucide-react:
         specifier: ^0.511.0
         version: 0.511.0(react@19.1.0)
+      prismjs:
+        specifier: 1.30.0
+        version: 1.30.0
       react:
         specifier: ^19.0.0
         version: 19.1.0

@@ -7,7 +7,12 @@
     "dev": "npm-run-all --parallel dev:frontend dev:backend",
     "dev:frontend": "vite --open",
     "dev:backend": "convex dev",
-    "lint": "tsc -p convex -noEmit --pretty false && tsc -p . -noEmit --pretty false && convex dev --once && vite build"
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "tsc -p convex -noEmit --pretty false && tsc -p . -noEmit --pretty false && convex dev --once && vite build",
+    "deploy:prod": "npm run build && convex deploy --cmd-url-env-var-name=VITE_CONVEX_URL",
+    "deploy:backend": "convex deploy",
+    "deploy:frontend": "npm run build"
   },
   "dependencies": {
     "@convex-dev/auth": "^0.0.80",
@@ -17,6 +22,7 @@
     "convex": "^1.24.2",
     "geist": "^1.4.2",
     "lucide-react": "^0.511.0",
+    "prismjs": "1.30.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-syntax-highlighter": "^15.6.1",

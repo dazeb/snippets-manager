@@ -23,5 +23,14 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment variables and secrets
+.env
+.env.local
+.env.production
+.env.development
+
+# Convex deployment configuration
+.convex-deploy-key
+
 # Ignored for the template, you probably want to remove it:
 package-lock.json

@@ -3,12 +3,14 @@ import { api } from "../convex/_generated/api";
 import { SignInForm } from "./SignInForm";
 import { SignOutButton } from "./SignOutButton";
 import { Toaster } from "sonner";
-import { ContentManager } from "./components/ContentManager";
-import { SpaceSelector } from "./components/SpaceSelector";
 import { ThemeToggle } from "./components/ThemeToggle";
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Id } from "../convex/_generated/dataModel";
 import { useTheme } from "./hooks/useTheme";
+
+// Lazy load heavy components for better code splitting
+const ContentManager = lazy(() => import("./components/ContentManager"));
+const SpaceSelector = lazy(() => import("./components/SpaceSelector"));
 
 export default function App() {
   // Initialize theme
@@ -98,14 +100,23 @@ function Content() {
   return (
     <div className="flex flex-col">
       <Authenticated>
-        {selectedSpaceId && !isNavigatingBack ? (
-          <ContentManager
-            spaceId={selectedSpaceId}
-            onBackToSpaces={handleBackToSpaces}
-          />
-        ) : (
-          <SpaceSelector onSelectSpace={handleSelectSpace} />
-        )}
+        <Suspense fallback={
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+              <p className="text-muted-foreground">Loading content...</p>
+            </div>
+          </div>
+        }>
+          {selectedSpaceId && !isNavigatingBack ? (
+            <ContentManager
+              spaceId={selectedSpaceId}
+              onBackToSpaces={handleBackToSpaces}
+            />
+          ) : (
+            <SpaceSelector onSelectSpace={handleSelectSpace} />
+          )}
+        </Suspense>
       </Authenticated>
       <Unauthenticated>
         <div className="flex items-center justify-center py-8 px-4">

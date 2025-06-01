@@ -42,4 +42,51 @@ window.addEventListener('message', async (message) => {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // React vendor chunk
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+            return 'react-vendor';
+          }
+
+          // Convex vendor chunk
+          if (id.includes('node_modules/convex') || id.includes('node_modules/@convex-dev')) {
+            return 'convex-vendor';
+          }
+
+          // Syntax highlighting chunk (largest dependency)
+          if (id.includes('node_modules/react-syntax-highlighter') ||
+              id.includes('node_modules/prismjs') ||
+              id.includes('node_modules/highlight.js') ||
+              id.includes('node_modules/refractor')) {
+            return 'syntax-highlighting';
+          }
+
+          // UI vendor chunk
+          if (id.includes('node_modules/@radix-ui') ||
+              id.includes('node_modules/class-variance-authority') ||
+              id.includes('node_modules/clsx') ||
+              id.includes('node_modules/tailwind-merge')) {
+            return 'ui-vendor';
+          }
+
+          // Utility chunks
+          if (id.includes('node_modules/sonner') ||
+              id.includes('node_modules/geist') ||
+              id.includes('node_modules/lucide-react')) {
+            return 'utils';
+          }
+
+          // Default vendor chunk for other node_modules
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        }
+      }
+    },
+    // Increase chunk size warning limit to 1MB for syntax highlighting
+    chunkSizeWarningLimit: 1000,
+  },
 }));

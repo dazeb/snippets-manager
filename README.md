@@ -81,6 +81,21 @@ A modern, full-stack code snippet management application built with React, TypeS
 5. **Open your browser**
    Navigate to `http://localhost:5173` to see the application.
 
+## 🚀 Production Deployment
+
+For production deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+Quick deployment:
+```bash
+# Set up production environment (see DEPLOYMENT.md)
+export $(cat .env.production | xargs)
+
+# Deploy to production
+pnpm run deploy:prod
+```
+
+**Note**: Production deployment keys are never committed to git for security.
+
 ## 🛠️ Tech Stack
 
 ### Frontend
@@ -89,7 +104,7 @@ A modern, full-stack code snippet management application built with React, TypeS
 - **Vite 6** - Fast build tool and dev server
 - **Tailwind CSS 4** - Utility-first CSS framework
 - **shadcn/ui** - High-quality React components
-- **react-syntax-highlighter** - Professional code highlighting
+- **react-syntax-highlighter** - Professional code highlighting with Prism.js 1.30.0
 - **Geist Font** - Modern typography
 
 ### Backend
