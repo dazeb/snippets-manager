@@ -6,6 +6,7 @@ const applicationTables = {
   spaces: defineTable({
     name: v.string(),
     description: v.optional(v.string()),
+    icon: v.optional(v.string()),
     userId: v.id("users"),
   })
     .index("by_user", ["userId"]),
@@ -30,7 +31,7 @@ const applicationTables = {
       filterFields: ["userId", "spaceId", "language", "project"],
     }),
 
-  notes: defineTable({
+  prompts: defineTable({
     title: v.string(),
     content: v.string(),
     description: v.optional(v.string()),
@@ -43,7 +44,7 @@ const applicationTables = {
     .index("by_space", ["spaceId"])
     .index("by_user_and_space", ["userId", "spaceId"])
     .index("by_user_and_project", ["userId", "project"])
-    .searchIndex("search_notes", {
+    .searchIndex("search_prompts", {
       searchField: "title",
       filterFields: ["userId", "spaceId", "project"],
     }),

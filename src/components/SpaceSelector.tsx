@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { Id } from "../../convex/_generated/dataModel";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Doc, Id } from "../../convex/_generated/dataModel";
 import { Badge } from "@/components/ui/badge";
 import { SpaceForm } from "./SpaceForm";
 import { toast } from "sonner";
@@ -14,6 +12,7 @@ interface SpaceSelectorProps {
 
 export function SpaceSelector({ onSelectSpace }: SpaceSelectorProps) {
   const [isCreating, setIsCreating] = useState(false);
+  const [editingSpace, setEditingSpace] = useState<Doc<"spaces"> | null>(null);
   const [hasAutoSelected, setHasAutoSelected] = useState(false);
   const spaces = useQuery(api.spaces.list) || [];
   const removeSpace = useMutation(api.spaces.remove);
@@ -41,9 +40,16 @@ export function SpaceSelector({ onSelectSpace }: SpaceSelectorProps) {
 
   const handleCancel = () => {
     setIsCreating(false);
+    setEditingSpace(null);
   };
 
   const handleSave = () => {
+    setIsCreating(false);
+    setEditingSpace(null);
+  };
+
+  const handleEdit = (space: Doc<"spaces">) => {
+    setEditingSpace(space);
     setIsCreating(false);
   };
 
@@ -60,10 +66,14 @@ export function SpaceSelector({ onSelectSpace }: SpaceSelectorProps) {
     }
   };
 
-  if (isCreating) {
+  if (isCreating || editingSpace) {
     return (
       <div className="min-h-[60vh] bg-background">
-        <SpaceForm onSave={handleSave} onCancel={handleCancel} />
+        <SpaceForm
+          space={editingSpace || undefined}
+          onSave={handleSave}
+          onCancel={handleCancel}
+        />
       </div>
     );
   }
@@ -74,7 +84,7 @@ export function SpaceSelector({ onSelectSpace }: SpaceSelectorProps) {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-4">Your Spaces</h1>
           <p className="text-lg text-muted-foreground">
-            Organize your code snippets into separate workspaces
+            Organize your code snippets and prompts into separate workspaces.
           </p>
         </div>
 
@@ -94,7 +104,7 @@ export function SpaceSelector({ onSelectSpace }: SpaceSelectorProps) {
                   Create New Space
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  Organize your snippets and notes
+                  Organize your snippets and prompts
                 </div>
               </div>
             </div>
@@ -122,7 +132,7 @@ export function SpaceSelector({ onSelectSpace }: SpaceSelectorProps) {
             </div>
             <h3 className="text-2xl font-semibold text-foreground mb-3">Welcome to your workspace</h3>
             <p className="text-muted-foreground text-lg mb-6 max-w-md mx-auto">
-              Create your first space to start organizing your code snippets and notes into separate projects
+              Create your first space to start organizing your code snippets and prompts into separate projects
             </p>
             <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
               <div className="flex items-center space-x-2">
@@ -131,7 +141,7 @@ export function SpaceSelector({ onSelectSpace }: SpaceSelectorProps) {
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span>Notes & Ideas</span>
+                <span>Prompts</span>
               </div>
             </div>
           </div>
@@ -146,6 +156,7 @@ export function SpaceSelector({ onSelectSpace }: SpaceSelectorProps) {
                 <SpaceCard
                   space={space}
                   onSelect={() => onSelectSpace(space._id)}
+                  onEdit={() => handleEdit(space)}
                   onDelete={() => handleDelete(space._id, space.name)}
                 />
               </div>
@@ -162,15 +173,17 @@ interface SpaceCardProps {
     _id: Id<"spaces">;
     name: string;
     description?: string;
+    icon?: string;
     _creationTime: number;
   };
   onSelect: () => void;
+  onEdit: () => void;
   onDelete: () => void;
 }
 
-function SpaceCard({ space, onSelect, onDelete }: SpaceCardProps) {
-  const contentCounts = useQuery(api.spaces.getContentCounts, { spaceId: space._id }) || { snippets: 0, notes: 0 };
-  const totalItems = contentCounts.snippets + contentCounts.notes;
+function SpaceCard({ space, onSelect, onEdit, onDelete }: SpaceCardProps) {
+  const contentCounts = useQuery(api.spaces.getContentCounts, { spaceId: space._id }) || { snippets: 0, prompts: 0 };
+  const totalItems = contentCounts.snippets + contentCounts.prompts;
 
   return (
     <div
@@ -184,9 +197,13 @@ function SpaceCard({ space, onSelect, onDelete }: SpaceCardProps) {
           <div className="flex items-center space-x-3 flex-1 min-w-0">
             {/* Space Icon */}
             <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center group-hover:bg-accent transition-colors flex-shrink-0">
-              <svg className="w-6 h-6 text-muted-foreground group-hover:text-accent-foreground transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
+              {space.icon ? (
+                <span className="text-2xl">{space.icon}</span>
+              ) : (
+                <svg className="w-6 h-6 text-muted-foreground group-hover:text-accent-foreground transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              )}
             </div>
 
             <div className="flex-1 min-w-0">
@@ -201,19 +218,36 @@ function SpaceCard({ space, onSelect, onDelete }: SpaceCardProps) {
             </div>
           </div>
 
-          {/* Delete Button */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }}
-            className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive flex-shrink-0"
-            title="Delete space"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
+          {/* Action Buttons */}
+          <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            {/* Edit Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit();
+              }}
+              className="p-2 rounded-lg hover:bg-accent text-muted-foreground hover:text-foreground flex-shrink-0"
+              title="Edit space"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </button>
+
+            {/* Delete Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+              className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive flex-shrink-0"
+              title="Delete space"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Stats with Badges */}
@@ -223,9 +257,9 @@ function SpaceCard({ space, onSelect, onDelete }: SpaceCardProps) {
               {contentCounts.snippets} snippet{contentCounts.snippets !== 1 ? 's' : ''}
             </Badge>
           )}
-          {contentCounts.notes > 0 && (
+          {contentCounts.prompts > 0 && (
             <Badge variant="outline" className="text-xs">
-              {contentCounts.notes} note{contentCounts.notes !== 1 ? 's' : ''}
+              {contentCounts.prompts} prompt{contentCounts.prompts !== 1 ? 's' : ''}
             </Badge>
           )}
           {totalItems === 0 && (

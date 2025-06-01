@@ -2,6 +2,68 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025-01-06] - Major Feature Update: Notes → Prompts
+
+### 🚀 **BREAKING CHANGE: Transformed Notes into Prompts**
+
+**What Changed:**
+- **Renamed "Notes" to "Prompts"** throughout the entire application
+- Updated database schema: `notes` table → `prompts` table
+- All note-related components renamed to prompt-related components
+- Updated UI text, icons, and terminology
+
+**New Features:**
+- **Prompt Management**: Store and organize AI prompts, templates, and reusable content
+- **Enhanced UI**: Prompts now use 🤖 emoji and prompt-specific terminology
+- **Same Functionality**: All existing features (search, tags, projects, spaces) work with prompts
+
+**Technical Changes:**
+- Database: `notes` table renamed to `prompts` with all indexes updated
+- Backend: `convex/notes.ts` → `convex/prompts.ts`
+- Frontend: `NoteList`, `NoteDetail`, `NoteForm` → `PromptList`, `PromptDetail`, `PromptForm`
+- API: All note-related functions now handle prompts
+- Types: Updated all TypeScript types and interfaces
+
+**Migration:**
+- Existing notes data will be automatically migrated to prompts
+- No data loss - all content, tags, and metadata preserved
+- Space content counts updated to show prompts instead of notes
+
+**Why This Change:**
+- Better aligns with modern AI workflow needs
+- Prompts are more relevant for developers and AI users
+- Clearer purpose and use case for stored content
+
+**Bug Fixes:**
+- ✅ Fixed SearchAndFilters component API reference from `notes` to `prompts`
+- ✅ Fixed lazy loading errors with proper named export handling
+- ✅ Added comprehensive error boundaries for better error handling
+- ✅ Resolved all TypeScript compilation errors
+
+## [2025-01-06] - Space Customization Feature
+
+### 🎨 **NEW: Space Editing & Customization**
+
+**Features Added:**
+- **✨ Edit Space Names**: Click edit button to modify space names
+- **✨ Edit Space Descriptions**: Update space descriptions for better organization
+- **✨ Custom Space Icons**: Choose from 100+ categorized icons for each space
+- **✨ Icon Categories**: Work & Projects, Code & Tech, Documents, Creative, Learning, Communication, Organization, Time & Planning, Symbols, Nature
+- **✨ Visual Icon Picker**: Interactive icon selection with live preview
+- **✨ Hover Actions**: Edit and delete buttons appear on space card hover
+
+**Technical Implementation:**
+- **Database**: Added `icon` field to spaces schema
+- **Backend**: Updated `spaces.create` and `spaces.update` mutations
+- **Frontend**: New `IconPicker` component with categorized icon selection
+- **UI**: Enhanced `SpaceForm` to support both create and edit modes
+- **UX**: Updated `SpaceSelector` with edit functionality and custom icon display
+
+**Default Improvements:**
+- **Default Space**: New spaces get a 📝 icon by default
+- **Icon Display**: Custom icons show in space cards with fallback to folder icon
+- **Responsive Design**: Icon picker works well on all screen sizes
+
 ## [Unreleased] - 2025-01-06
 
 ### Fixed

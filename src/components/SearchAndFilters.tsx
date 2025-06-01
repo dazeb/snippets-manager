@@ -25,12 +25,12 @@ export function SearchAndFilters({
 }: SearchAndFiltersProps) {
   const languages = useQuery(api.snippets.getLanguages, { spaceId }) || [];
   const snippetProjects = useQuery(api.snippets.getProjects, { spaceId }) || [];
-  const noteProjects = useQuery(api.notes.getProjects, { spaceId }) || [];
+  const promptProjects = useQuery(api.prompts.getProjects, { spaceId }) || [];
 
-  // Combine projects from both snippets and notes
+  // Combine projects from both snippets and prompts
   const allProjects = [...new Set([
     ...snippetProjects,
-    ...noteProjects
+    ...promptProjects
   ])].sort();
 
   return (
@@ -39,7 +39,7 @@ export function SearchAndFilters({
       <div>
         <input
           type="text"
-          placeholder={`Search ${showLanguageFilter ? 'snippets' : 'notes'}...`}
+          placeholder={`Search ${showLanguageFilter ? 'snippets' : 'prompts'}...`}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-colors"

@@ -1,23 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { Doc, Id } from "../../convex/_generated/dataModel";
+import { IconPicker } from "./IconPicker";
 import { toast } from "sonner";
 
 interface SpaceFormProps {
+  space?: Doc<"spaces">;
   onSave: () => void;
   onCancel: () => void;
 }
 
-export function SpaceForm({ onSave, onCancel }: SpaceFormProps) {
+export function SpaceForm({ space, onSave, onCancel }: SpaceFormProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [icon, setIcon] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   const createSpace = useMutation(api.spaces.create);
+  const updateSpace = useMutation(api.spaces.update);
+
+  // Initialize form with existing space data
+  useEffect(() => {
+    if (space) {
+      setName(space.name);
+      setDescription(space.description || "");
+      setIcon(space.icon || "");
+    }
+  }, [space]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name.trim()) {
       toast.error("Space name is required");
       return;
@@ -25,15 +39,28 @@ export function SpaceForm({ onSave, onCancel }: SpaceFormProps) {
 
     setIsSaving(true);
     try {
-      await createSpace({
+      const spaceData = {
         name: name.trim(),
         description: description.trim() || undefined,
-      });
-      
-      toast.success("Space created successfully");
+        icon: icon || undefined,
+      };
+
+      if (space) {
+        // Update existing space
+        await updateSpace({
+          id: space._id,
+          ...spaceData,
+        });
+        toast.success("Space updated successfully");
+      } else {
+        // Create new space
+        await createSpace(spaceData);
+        toast.success("Space created successfully");
+      }
+
       onSave();
     } catch (error) {
-      toast.error("Failed to create space");
+      toast.error(space ? "Failed to update space" : "Failed to create space");
     } finally {
       setIsSaving(false);
     }
@@ -42,7 +69,9 @@ export function SpaceForm({ onSave, onCancel }: SpaceFormProps) {
   return (
     <div className="max-w-2xl mx-auto p-8">
       <div className="bg-card rounded-lg border border-border p-8 shadow-sm">
-        <h2 className="text-2xl font-bold text-card-foreground mb-6">Create New Space</h2>
+        <h2 className="text-2xl font-bold text-card-foreground mb-6">
+          {space ? "Edit Space" : "Create New Space"}
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -72,6 +101,11 @@ export function SpaceForm({ onSave, onCancel }: SpaceFormProps) {
             />
           </div>
 
+          <IconPicker
+            selectedIcon={icon}
+            onIconSelect={setIcon}
+          />
+
           <div className="flex justify-end space-x-3">
             <button
               type="button"
@@ -85,7 +119,10 @@ export function SpaceForm({ onSave, onCancel }: SpaceFormProps) {
               disabled={isSaving}
               className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 shadow-xs"
             >
-              {isSaving ? "Creating..." : "Create Space"}
+              {isSaving
+                ? (space ? "Updating..." : "Creating...")
+                : (space ? "Update Space" : "Create Space")
+              }
             </button>
           </div>
         </form>

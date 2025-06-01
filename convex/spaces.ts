@@ -40,6 +40,7 @@ export const create = mutation({
   args: {
     name: v.string(),
     description: v.optional(v.string()),
+    icon: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -59,6 +60,7 @@ export const update = mutation({
     id: v.id("spaces"),
     name: v.string(),
     description: v.optional(v.string()),
+    icon: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -130,14 +132,14 @@ export const getNoteCount = query({
       return 0;
     }
 
-    const notes = await ctx.db
-      .query("notes")
+    const prompts = await ctx.db
+      .query("prompts")
       .withIndex("by_user_and_space", (q) =>
         q.eq("userId", userId).eq("spaceId", args.spaceId)
       )
       .collect();
 
-    return notes.length;
+    return prompts.length;
   },
 });
 
@@ -146,10 +148,10 @@ export const getContentCounts = query({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
-      return { snippets: 0, notes: 0 };
+      return { snippets: 0, prompts: 0 };
     }
 
-    const [snippets, notes] = await Promise.all([
+    const [snippets, prompts] = await Promise.all([
       ctx.db
         .query("snippets")
         .withIndex("by_user_and_space", (q) =>
@@ -157,7 +159,7 @@ export const getContentCounts = query({
         )
         .collect(),
       ctx.db
-        .query("notes")
+        .query("prompts")
         .withIndex("by_user_and_space", (q) =>
           q.eq("userId", userId).eq("spaceId", args.spaceId)
         )
@@ -166,7 +168,7 @@ export const getContentCounts = query({
 
     return {
       snippets: snippets.length,
-      notes: notes.length,
+      prompts: prompts.length,
     };
   },
 });
@@ -193,6 +195,7 @@ export const createDefaultSpace = mutation({
     const spaceId = await ctx.db.insert("spaces", {
       name: "My Snippets",
       description: "Default space for your code snippets",
+      icon: "📝",
       userId,
     });
 
@@ -214,14 +217,14 @@ export const migrateOrphanedSnippets = mutation({
       throw new Error("Space not found");
     }
 
-    // Find snippets and notes without spaceId
-    const [orphanedSnippets, orphanedNotes] = await Promise.all([
+    // Find snippets and prompts without spaceId
+    const [orphanedSnippets, orphanedPrompts] = await Promise.all([
       ctx.db
         .query("snippets")
         .withIndex("by_user", (q) => q.eq("userId", userId))
         .collect(),
       ctx.db
-        .query("notes")
+        .query("prompts")
         .withIndex("by_user", (q) => q.eq("userId", userId))
         .collect()
     ]);
@@ -236,10 +239,10 @@ export const migrateOrphanedSnippets = mutation({
       }
     }
 
-    // Migrate orphaned notes
-    for (const note of orphanedNotes) {
-      if (!note.spaceId) {
-        await ctx.db.patch(note._id, { spaceId: args.spaceId });
+    // Migrate orphaned prompts
+    for (const prompt of orphanedPrompts) {
+      if (!prompt.spaceId) {
+        await ctx.db.patch(prompt._id, { spaceId: args.spaceId });
         migratedCount++;
       }
     }

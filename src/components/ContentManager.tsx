@@ -4,9 +4,9 @@ import { api } from "../../convex/_generated/api";
 import { SnippetList } from "./SnippetList";
 import { SnippetDetail } from "./SnippetDetail";
 import { SnippetForm } from "./SnippetForm";
-import { NoteList } from "./NoteList";
-import { NoteDetail } from "./NoteDetail";
-import { NoteForm } from "./NoteForm";
+import { PromptList } from "./PromptList";
+import { PromptDetail } from "./PromptDetail";
+import { PromptForm } from "./PromptForm";
 import { SearchAndFilters } from "./SearchAndFilters";
 import { Id } from "../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
@@ -16,12 +16,12 @@ interface ContentManagerProps {
   onBackToSpaces: () => void;
 }
 
-type ContentType = "snippets" | "notes";
+type ContentType = "snippets" | "prompts";
 
 export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps) {
   const [activeTab, setActiveTab] = useState<ContentType>("snippets");
   const [selectedSnippetId, setSelectedSnippetId] = useState<Id<"snippets"> | null>(null);
-  const [selectedNoteId, setSelectedNoteId] = useState<Id<"notes"> | null>(null);
+  const [selectedPromptId, setSelectedPromptId] = useState<Id<"prompts"> | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -38,7 +38,7 @@ export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps)
     project: selectedProject || undefined,
   });
 
-  const notes = useQuery(api.notes.list, {
+  const prompts = useQuery(api.prompts.list, {
     spaceId: spaceId,
     search: searchQuery || undefined,
     project: selectedProject || undefined,
@@ -49,16 +49,16 @@ export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps)
     selectedSnippetId ? { id: selectedSnippetId } : "skip"
   );
 
-  const selectedNote = useQuery(
-    api.notes.get,
-    selectedNoteId ? { id: selectedNoteId } : "skip"
+  const selectedPrompt = useQuery(
+    api.prompts.get,
+    selectedPromptId ? { id: selectedPromptId } : "skip"
   );
 
   const handleCreateNew = () => {
     setIsCreating(true);
     setIsEditing(false);
     setSelectedSnippetId(null);
-    setSelectedNoteId(null);
+    setSelectedPromptId(null);
   };
 
   const handleEdit = () => {
@@ -78,13 +78,13 @@ export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps)
 
   const handleSelectSnippet = (id: Id<"snippets">) => {
     setSelectedSnippetId(id);
-    setSelectedNoteId(null);
+    setSelectedPromptId(null);
     setIsCreating(false);
     setIsEditing(false);
   };
 
-  const handleSelectNote = (id: Id<"notes">) => {
-    setSelectedNoteId(id);
+  const handleSelectPrompt = (id: Id<"prompts">) => {
+    setSelectedPromptId(id);
     setSelectedSnippetId(null);
     setIsCreating(false);
     setIsEditing(false);
@@ -92,7 +92,7 @@ export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps)
 
   const handleDelete = () => {
     setSelectedSnippetId(null);
-    setSelectedNoteId(null);
+    setSelectedPromptId(null);
     setIsCreating(false);
     setIsEditing(false);
   };
@@ -100,7 +100,7 @@ export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps)
   const handleTabChange = (tab: ContentType) => {
     setActiveTab(tab);
     setSelectedSnippetId(null);
-    setSelectedNoteId(null);
+    setSelectedPromptId(null);
     setIsCreating(false);
     setIsEditing(false);
     setSearchQuery("");
@@ -109,7 +109,7 @@ export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps)
   };
 
   const isShowingForm = isCreating || isEditing;
-  const hasSelection = selectedSnippetId || selectedNoteId;
+  const hasSelection = selectedSnippetId || selectedPromptId;
 
   return (
     <div className="flex h-[calc(100vh-4rem)]">
@@ -146,19 +146,19 @@ export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps)
               Snippets ({contentCounts?.snippets || 0})
             </button>
             <button
-              onClick={() => handleTabChange("notes")}
+              onClick={() => handleTabChange("prompts")}
               className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                activeTab === "notes"
+                activeTab === "prompts"
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              Notes ({contentCounts?.notes || 0})
+              Prompts ({contentCounts?.prompts || 0})
             </button>
           </div>
 
           <Button onClick={handleCreateNew} className="w-full">
-            + New {activeTab === "snippets" ? "Snippet" : "Note"}
+            + New {activeTab === "snippets" ? "Snippet" : "Prompt"}
           </Button>
         </div>
         
@@ -180,10 +180,13 @@ export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps)
             onSelect={handleSelectSnippet}
           />
         ) : (
-          <NoteList
-            notes={notes || []}
-            selectedId={selectedNoteId}
-            onSelect={handleSelectNote}
+          <PromptList
+            spaceId={spaceId}
+            selectedPrompt={selectedPrompt || undefined}
+            onSelectPrompt={(prompt) => handleSelectPrompt(prompt._id)}
+            onNewPrompt={handleCreateNew}
+            searchQuery={searchQuery}
+            selectedProject={selectedProject}
           />
         )}
       </div>
@@ -199,9 +202,9 @@ export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps)
               onCancel={handleCancel}
             />
           ) : (
-            <NoteForm
+            <PromptForm
               spaceId={spaceId}
-              note={isEditing ? selectedNote || undefined : undefined}
+              prompt={isEditing ? selectedPrompt || undefined : undefined}
               onSave={handleSave}
               onCancel={handleCancel}
             />
@@ -213,9 +216,9 @@ export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps)
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
-          ) : activeTab === "notes" && selectedNote ? (
-            <NoteDetail
-              note={selectedNote}
+          ) : activeTab === "prompts" && selectedPrompt ? (
+            <PromptDetail
+              prompt={selectedPrompt}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
@@ -224,10 +227,10 @@ export function ContentManager({ spaceId, onBackToSpaces }: ContentManagerProps)
           <div className="flex items-center justify-center h-full text-muted-foreground">
             <div className="text-center">
               <div className="text-6xl mb-4">
-                {activeTab === "snippets" ? "📝" : "📄"}
+                {activeTab === "snippets" ? "📝" : "🤖"}
               </div>
               <p className="text-xl">
-                Select a {activeTab === "snippets" ? "snippet" : "note"} or create a new one
+                Select a {activeTab === "snippets" ? "snippet" : "prompt"} or create a new one
               </p>
             </div>
           </div>

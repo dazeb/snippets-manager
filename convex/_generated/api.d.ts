@@ -15,7 +15,7 @@ import type {
 } from "convex/server";
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
-import type * as notes from "../notes.js";
+import type * as prompts from "../prompts.js";
 import type * as router from "../router.js";
 import type * as snippets from "../snippets.js";
 import type * as spaces from "../spaces.js";
@@ -31,7 +31,7 @@ import type * as spaces from "../spaces.js";
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
-  notes: typeof notes;
+  prompts: typeof prompts;
   router: typeof router;
   snippets: typeof snippets;
   spaces: typeof spaces;
