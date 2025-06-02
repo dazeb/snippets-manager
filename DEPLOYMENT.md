@@ -1,5 +1,82 @@
 # Deployment Guide
 
+## Overview
+
+This project uses **Convex** as the backend and can be deployed as a static frontend to various platforms. The architecture is:
+
+- **Frontend**: React + Vite → Static files
+- **Backend**: Convex → Convex Cloud
+
+## Environment Variables
+
+### Required for Deployment
+
+Set these environment variables in your deployment platform:
+
+```bash
+# Convex Production Deployment Key (REQUIRED)
+CONVEX_DEPLOY_KEY=prod:your-deployment-key
+
+# Convex Site URL (REQUIRED)
+SITE_URL=https://your-domain.com
+```
+
+### Security Note
+⚠️ **Never commit `CONVEX_DEPLOY_KEY` to git!** Always set it as an environment variable in your deployment platform.
+
+## Platform-Specific Deployment
+
+### Railway
+
+1. **Connect your repository** to Railway
+2. **Set environment variables**:
+   ```bash
+   CONVEX_DEPLOY_KEY=prod:your-deployment-key
+   SITE_URL=https://your-app.railway.app
+   ```
+3. **Deploy**: Railway will automatically use the `railway.toml` configuration
+
+### Vercel
+
+1. **Connect your repository** to Vercel
+2. **Set environment variables** in Vercel dashboard
+3. **Deploy**: Vercel will use the `vercel.json` configuration
+
+### Netlify
+
+1. **Connect your repository** to Netlify
+2. **Set environment variables** in Netlify dashboard
+3. **Deploy**: Netlify will use the `netlify.toml` configuration
+
+## Build Process
+
+The deployment process:
+
+1. **Install dependencies**: `pnpm install`
+2. **Deploy Convex backend**: `convex deploy` (uses CONVEX_DEPLOY_KEY)
+3. **Build frontend**: `vite build`
+4. **Serve static files**: Platform serves the `dist/` folder
+
+## Troubleshooting
+
+### Lockfile Issues
+If you see "frozen-lockfile" errors:
+```bash
+pnpm install  # Updates pnpm-lock.yaml
+git add pnpm-lock.yaml
+git commit -m "Update lockfile"
+```
+
+### Environment Variable Issues
+- Ensure `CONVEX_DEPLOY_KEY` is set correctly
+- Ensure `SITE_URL` matches your deployment URL
+- Check Convex dashboard for deployment status
+
+### Build Failures
+- Check that all dependencies are properly installed
+- Verify TypeScript compilation passes: `pnpm run lint`
+- Test local build: `pnpm run build`
+
 This application is a **Single Page Application (SPA)** built with React + Vite and uses Convex as a serverless backend. **You do NOT need nginx or complex server setup.**
 
 ## 🚀 Recommended Deployment Options (No Server Required)
