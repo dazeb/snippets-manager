@@ -57,8 +57,5 @@
         }
       ]
     }
-  ],
-  "env": {
-    "CONVEX_DEPLOYMENT": "@convex_deployment"
-  }
+  ]
 }

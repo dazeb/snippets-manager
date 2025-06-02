@@ -10,9 +10,10 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "tsc -p convex -noEmit --pretty false && tsc -p . -noEmit --pretty false && convex dev --once && vite build",
-    "deploy:prod": "npm run build && convex deploy --cmd-url-env-var-name=VITE_CONVEX_URL",
-    "deploy:backend": "convex deploy",
+    "deploy:prod": "convex deploy --prod && npm run build",
+    "deploy:backend": "convex deploy --prod",
     "deploy:frontend": "npm run build",
+    "deploy:dev": "convex deploy && npm run build",
     "serve": "node server.js",
     "start": "npm run build && npm run serve"
   },

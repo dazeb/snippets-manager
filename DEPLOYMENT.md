@@ -16,7 +16,9 @@ This application is a **Single Page Application (SPA)** built with React + Vite 
 **Steps:**
 1. Push your code to GitHub
 2. Connect your GitHub repo to Vercel
-3. Set environment variable: `CONVEX_DEPLOYMENT`
+3. Set environment variable in Vercel dashboard:
+   - **Name**: `VITE_CONVEX_URL`
+   - **Value**: Your Convex deployment URL (from `.env.local`)
 4. Deploy automatically on every push
 
 **Configuration:** Already included in `vercel.json`
@@ -34,7 +36,9 @@ This application is a **Single Page Application (SPA)** built with React + Vite 
 2. Connect your GitHub repo to Netlify
 3. Set build command: `pnpm build`
 4. Set publish directory: `dist`
-5. Set environment variable: `CONVEX_DEPLOYMENT`
+5. Set environment variable in Netlify dashboard:
+   - **Name**: `VITE_CONVEX_URL`
+   - **Value**: Your Convex deployment URL (from `.env.local`)
 
 **Configuration:** Already included in `netlify.toml`
 
@@ -43,8 +47,13 @@ This application is a **Single Page Application (SPA)** built with React + Vite 
 All deployment options need:
 
 ```
-CONVEX_DEPLOYMENT=your-convex-deployment-url
+VITE_CONVEX_URL=your-convex-deployment-url
 ```
+
+**How to get your Convex URL:**
+1. Run `pnpm dev` locally
+2. Check `.env.local` file for `CONVEX_DEPLOYMENT` value
+3. Use this URL as `VITE_CONVEX_URL` in production
 
 ## 📦 Build Process
 

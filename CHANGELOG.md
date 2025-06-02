@@ -210,6 +210,44 @@ All notable changes to this project will be documented in this file.
 - **Module Type**: `type="module"` in HTML script tags
 - **Cross-Origin**: Proper `crossorigin` attributes for module preloading
 
+## [2025-01-06] - Environment Variable Configuration Fix
+
+### 🐛 **Fixed: Convex Deployment Secret Error**
+
+**Problem:** `Environment Variable "CONVEX_DEPLOYMENT" references Secret "convex_deployment", which does not exist`
+
+**Root Cause:** Vercel configuration referencing non-existent secret instead of environment variable
+
+**✅ Solutions Implemented:**
+
+**🔧 Configuration Updates:**
+- **Removed Secret Reference**: Eliminated `@convex_deployment` from `vercel.json`
+- **Simplified Environment Setup**: Use standard environment variables instead of secrets
+- **Clear Variable Naming**: `VITE_CONVEX_URL` for production, `CONVEX_DEPLOYMENT` for development
+
+**📁 Files Added/Updated:**
+- **`DEPLOYMENT_SETUP.md`**: Comprehensive deployment guide with step-by-step instructions
+- **`.env.example`**: Updated with clear variable naming and usage instructions
+- **`vercel.json`**: Removed secret references, simplified configuration
+- **`package.json`**: Added production deployment scripts
+
+**🚀 Deployment Process:**
+1. **Development**: `CONVEX_DEPLOYMENT` automatically set by `convex dev`
+2. **Production**: `VITE_CONVEX_URL` manually set in hosting platform
+3. **Build Scripts**: Separate commands for dev and production deployment
+
+**📋 Platform-Specific Instructions:**
+- **Vercel**: Set `VITE_CONVEX_URL` in dashboard environment variables
+- **Netlify**: Set `VITE_CONVEX_URL` in site settings
+- **Docker**: Use environment variable injection
+- **Manual**: Export `VITE_CONVEX_URL` before build
+
+**🛡️ Best Practices:**
+- **No Secrets in Code**: All sensitive data via environment variables
+- **Clear Documentation**: Step-by-step setup guides
+- **Multiple Options**: Support for various hosting platforms
+- **Error Prevention**: Template files and validation steps
+
 ## [Unreleased] - 2025-01-06
 
 ### Fixed
