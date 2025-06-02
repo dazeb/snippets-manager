@@ -32,19 +32,28 @@ export function SignInForm() {
             setSubmitting(true);
             const formData = new FormData(e.target as HTMLFormElement);
             formData.set("flow", flow);
-            void signIn("password", formData).catch((error) => {
-              let toastTitle = "";
-              if (error.message.includes("Invalid password")) {
-                toastTitle = "Invalid password. Please try again.";
-              } else {
-                toastTitle =
-                  flow === "signIn"
-                    ? "Could not sign in, did you mean to sign up?"
-                    : "Could not sign up, did you mean to sign in?";
-              }
-              toast.error(toastTitle);
-              setSubmitting(false);
-            });
+            void signIn("password", formData)
+              .then((result) => {
+                console.log("Authentication success:", result);
+                toast.success(flow === "signIn" ? "Signed in successfully!" : "Account created successfully!");
+                setSubmitting(false);
+              })
+              .catch((error) => {
+                console.error("Authentication error:", error);
+                let toastTitle = "";
+                if (error.message.includes("Invalid password")) {
+                  toastTitle = "Invalid password. Please try again.";
+                } else if (error.message.includes("redirect")) {
+                  toastTitle = "Authentication configuration error. Please try again.";
+                } else {
+                  toastTitle =
+                    flow === "signIn"
+                      ? "Could not sign in, did you mean to sign up?"
+                      : "Could not sign up, did you mean to sign in?";
+                }
+                toast.error(`${toastTitle} (${error.message})`);
+                setSubmitting(false);
+              });
           }}
         >
           <div className="space-y-2">

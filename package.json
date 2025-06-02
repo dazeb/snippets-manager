@@ -1,7 +1,7 @@
 {
-  "name": "flex-template",
+  "name": "snippets-convex-template-auth",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "npm-run-all --parallel dev:frontend dev:backend",
@@ -10,19 +10,14 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "tsc -p convex -noEmit --pretty false && tsc -p . -noEmit --pretty false && convex dev --once && vite build",
-    "deploy:prod": "convex deploy --prod && npm run build",
-    "deploy:backend": "convex deploy --prod",
-    "deploy:frontend": "npm run build",
-    "deploy:dev": "convex deploy && npm run build",
-    "serve": "node server.js",
-    "start": "npm run build && npm run serve"
+    "deploy": "convex deploy"
   },
   "dependencies": {
-    "@convex-dev/auth": "^0.0.80",
+    "@convex-dev/auth": "^0.0.86",
     "@radix-ui/react-slot": "^1.2.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "convex": "^1.24.2",
+    "convex": "^1.24.5",
     "geist": "^1.4.2",
     "lucide-react": "^0.511.0",
     "prismjs": "1.30.0",
@@ -44,7 +39,6 @@
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
-    "express": "^5.1.0",
     "globals": "^15.15.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.5.3",

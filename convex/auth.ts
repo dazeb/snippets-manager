@@ -4,6 +4,12 @@ import { query } from "./_generated/server";
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [Password],
+  callbacks: {
+    async redirect({ redirectTo }) {
+      // Handle redirect safely
+      return redirectTo || "/";
+    },
+  },
 });
 
 export const loggedInUser = query({
