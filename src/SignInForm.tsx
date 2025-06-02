@@ -31,7 +31,6 @@ export function SignInForm() {
             e.preventDefault();
             setSubmitting(true);
             const formData = new FormData(e.target as HTMLFormElement);
-            formData.set("flow", flow);
             void signIn("password", formData)
               .then((result) => {
                 console.log("Authentication success:", result);
@@ -83,6 +82,9 @@ export function SignInForm() {
               disabled={submitting}
             />
           </div>
+
+          {/* Hidden input for flow - this is the correct way according to Convex Auth docs */}
+          <input name="flow" type="hidden" value={flow} />
 
           <Button
             type="submit"
