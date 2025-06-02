@@ -11,6 +11,8 @@
     "preview": "vite preview",
     "lint": "tsc -p convex -noEmit --pretty false && tsc -p . -noEmit --pretty false && convex dev --once && vite build",
     "deploy": "convex deploy && npm run build",
+    "deploy:backend": "convex deploy",
+    "deploy:prod": "convex deploy && npm run build",
     "start": "npm run preview"
   },
   "dependencies": {
