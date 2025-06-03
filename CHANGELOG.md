@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025-01-06] - Codebase Cleanup & Optimization
+
+### 🧹 **CLEANUP: Removed Unused Files and Dependencies**
+
+**Dependencies Removed:**
+- **geist**: No longer used (switched to Outfit font via Google Fonts)
+- **lucide-react**: Not being used in the codebase (using custom SVG icons)
+
+**Files Removed:**
+- **setup.mjs**: One-time setup script no longer needed
+- **nginx.conf**: Not needed for modern serverless deployment
+- **netlify.toml**: Removed since using Vercel for deployment
+- **.railwayignore**: Railway-specific file not being used
+- **.whitesource**: Security scanning config not needed
+- **deploy-prod.sh**: Non-functional script (referenced missing .env.production)
+- **dist/**: Build artifacts directory (regenerated on build)
+
+**Configuration Updates:**
+- **vite.config.ts**: Removed references to unused dependencies in build chunking
+- **Package size reduction**: Smaller bundle size with fewer unused dependencies
+- **Cleaner project structure**: Removed redundant deployment configurations
+
+**Benefits:**
+- **Reduced bundle size**: Fewer unused dependencies
+- **Cleaner codebase**: Removed redundant and non-functional files
+- **Simplified deployment**: Focus on Vercel deployment with proper configuration
+- **Better maintainability**: Less clutter and clearer project structure
+
 ## [2025-01-06] - Supabase Theme Installation
 
 ### 🎨 **NEW: Supabase Theme Applied Sitewide**

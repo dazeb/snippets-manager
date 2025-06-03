@@ -102,8 +102,7 @@ window.addEventListener('message', async (message) => {
           }
 
           // Icons and visual components
-          if (id.includes('node_modules/lucide-react') ||
-              id.includes('node_modules/@heroicons') ||
+          if (id.includes('node_modules/@heroicons') ||
               id.includes('node_modules/react-icons')) {
             return 'icons';
           }
@@ -115,8 +114,7 @@ window.addEventListener('message', async (message) => {
           }
 
           // Fonts and typography
-          if (id.includes('node_modules/geist') ||
-              id.includes('node_modules/@next/font')) {
+          if (id.includes('node_modules/@next/font')) {
             return 'fonts';
           }
 
