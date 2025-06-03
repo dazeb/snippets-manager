@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025-01-06] - Supabase Theme Installation
+
+### 🎨 **NEW: Supabase Theme Applied Sitewide**
+
+**What Changed:**
+- **Installed Supabase Theme**: Applied the official Supabase theme from tweakcn.com
+- **Updated Color Palette**: Replaced existing theme with Supabase's green-tinted color scheme
+- **Enhanced Typography**: Switched from Geist to Outfit font family for better readability
+- **Improved Shadows**: Updated shadow system with Supabase's refined shadow values
+- **Better Contrast**: Enhanced light and dark mode contrast ratios
+
+**Visual Updates:**
+- **Primary Colors**: Beautiful green accent colors (oklch(0.8348 0.1302 160.9080))
+- **Background**: Refined background colors for better visual hierarchy
+- **Typography**: Outfit font family with improved letter spacing (0.025em)
+- **Shadows**: Enhanced shadow system with 3px blur and 0.17 opacity
+- **Borders**: Subtle border colors that complement the green theme
+
+**Technical Changes:**
+- **CSS Variables**: Updated all color variables to Supabase theme values
+- **Font Loading**: Updated Google Fonts to load Outfit instead of Geist
+- **Shadow System**: Enhanced shadow definitions with better blur and opacity
+- **Letter Spacing**: Improved typography with 0.025em letter spacing
+- **Theme Consistency**: Both light and dark modes use Supabase color palette
+
+**Files Updated:**
+- `src/index.css`: Complete theme variable replacement
+- `index.html`: Updated Google Fonts link to Outfit font family
+- Applied theme consistently across light and dark modes
+
 ## [2025-01-06] - Major Feature Update: Notes → Prompts
 
 ### 🚀 **BREAKING CHANGE: Transformed Notes into Prompts**
